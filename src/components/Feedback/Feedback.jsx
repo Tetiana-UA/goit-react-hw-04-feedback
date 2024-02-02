@@ -1,4 +1,4 @@
-import { useState, Component } from "react";
+import { useState } from "react";
 
 import Statistic from "components/Statistics/Statistics";
 import Section from "components/Section/Section";
