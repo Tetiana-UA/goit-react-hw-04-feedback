@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, Component } from "react";
 
 import Statistic from "components/Statistics/Statistics";
 import Section from "components/Section/Section";
@@ -7,52 +7,52 @@ import  Notification  from "components/Notification/Notification";
 
 import styles from "./feedback.module.css";
 
+const variants = ["good", "neutral", "bad"];
 
-class Feedback extends Component {
-    static options=["good", "neutral", "bad"]
-
-    state = {
+const Feedback = () => {
+    const [options, setOptions] = useState({
         good:0,
         neutral:0,
         bad:0,
-    } 
-
-    calcTotal(){
-    const {good, neutral, bad}=this.state;
+    })
+     
+    const calcTotal = () => {
+    const {good, neutral, bad}=options;
     const total=good + neutral + bad;
     return total;
     }
 
-    feedbackPercentage(keyName){
-        const total=this.calcTotal();
+    const feedbackPercentage = (keyName) => {
+        const total=calcTotal();
         if (!total){
             return 0;
         }
-        const value=this.state[keyName];
+        const value=options[keyName];
+        
         return Number(((value/total)*100).toFixed(2));
     }
 
-    onLeaveFeedback=(keyName)=>{
-        this.setState(prevState=>{
+    const onLeaveFeedback = (keyName) => {
+        setOptions(prevOptions=>{
         return{
-            [keyName]:prevState[keyName] + 1
+            ...prevOptions,
+            [keyName]:prevOptions[keyName] + 1
             }
         })
     }
 
-    render() {
-        const total=this.calcTotal();
-        const positiveFeedback=this.feedbackPercentage("good");
+        const total=calcTotal();
+        const positiveFeedback=feedbackPercentage("good");
         
             return (
             <div className={styles.wrapper}>              
                 <Section title="Please leave feedback" >
-                    <FeedbackOptions options={Feedback.options} onLeaveFeedback={this.onLeaveFeedback}/>   
+                    <FeedbackOptions options={variants} onLeaveFeedback={onLeaveFeedback}/>   
                 </Section> 
 
                 {total ?     
                 <Section title="Statistics" >         
-                    <Statistic good={this.state.good} bad={this.state.bad} neutral={this.state.neutral} total={total} positiveFeedback={positiveFeedback}  />
+                    <Statistic good={options.good} bad={options.bad} neutral={options.neutral} total={total} positiveFeedback={positiveFeedback}  />
                 </Section> 
                 : 
                 <Notification message="There is no feedback..." />}  
@@ -60,6 +60,6 @@ class Feedback extends Component {
             </div>
         )
     }
-}
+
  
 export default Feedback;
